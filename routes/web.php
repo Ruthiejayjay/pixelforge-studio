@@ -12,6 +12,7 @@ Route::get('/', function () {
     if (auth()->check()) {
         return to_route('dashboard');
     }
+    return Inertia::render('Welcome');
 })->name('home');
 
 Route::middleware(['auth'])->group(function () {

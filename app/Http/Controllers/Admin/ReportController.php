@@ -217,7 +217,7 @@ class ReportController extends Controller
         $totalProfitNanos = $totalCreditSpendNanos - $totalProviderCostNanos;
         $totalDeltaNanos = $pixelforgeTotalNanos !== null ? ($totalProviderCostNanos - $pixelforgeTotalNanos) : null;
 
-        return Inertia::render('Admin/Report', [
+        return Inertia::render('admin/Report', [
             'filters' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
