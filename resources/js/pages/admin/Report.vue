@@ -76,7 +76,8 @@ const applyPresetDays = (days: number) => {
                 <div>
                     <h1 class="text-2xl font-semibold tracking-tight">Operator Billing & Usage Report</h1>
                     <p class="text-sm text-muted-foreground">
-                        All daily figures are grouped by <strong>UTC completion date</strong> to match Pixelforge's <code>GET /v1/usage</code> source of truth.
+                        All daily figures are grouped by <strong>UTC completion date</strong> to match Pixelforge's <code>GET /v1/usage</code> source
+                        of truth.
                     </p>
                 </div>
 
@@ -155,10 +156,7 @@ const applyPresetDays = (days: number) => {
                                 <CheckCircle2 class="size-5" />
                                 Exact Match
                             </span>
-                            <span
-                                v-else-if="reconciliation.available"
-                                class="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400"
-                            >
+                            <span v-else-if="reconciliation.available" class="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400">
                                 <AlertCircle class="size-5" />
                                 Delta: ${{ reconciliation.delta_usd }}
                             </span>
@@ -250,7 +248,9 @@ const applyPresetDays = (days: number) => {
             <Card>
                 <CardHeader>
                     <CardTitle>Per-User Breakdown</CardTitle>
-                    <CardDescription>Spend, provider cost, and gross profit by user for {{ filters.start_date }} to {{ filters.end_date }} (UTC).</CardDescription>
+                    <CardDescription
+                        >Spend, provider cost, and gross profit by user for {{ filters.start_date }} to {{ filters.end_date }} (UTC).</CardDescription
+                    >
                 </CardHeader>
                 <CardContent>
                     <div class="overflow-x-auto">

@@ -22,7 +22,7 @@ interface Props {
     entries: Paginated<CreditLedgerEntryItem>;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 const page = usePage<SharedData>();
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Credits', href: '/credits' }];
@@ -108,20 +108,11 @@ const formatDateTime = (iso: string | null) => {
                         <Wallet class="size-5 text-primary" />
                         Buy Credits
                     </CardTitle>
-                    <CardDescription>
-                        Simulated top-up for testing—no real payments are processed. Credits equal US dollars.
-                    </CardDescription>
+                    <CardDescription> Simulated top-up for testing—no real payments are processed. Credits equal US dollars. </CardDescription>
                 </CardHeader>
                 <CardContent class="space-y-4">
                     <div class="flex flex-wrap gap-2">
-                        <Button
-                            v-for="pack in packs"
-                            :key="pack"
-                            type="button"
-                            variant="outline"
-                            :disabled="form.processing"
-                            @click="buyPack(pack)"
-                        >
+                        <Button v-for="pack in packs" :key="pack" type="button" variant="outline" :disabled="form.processing" @click="buyPack(pack)">
                             <Coins class="size-4" />
                             +${{ pack }}
                         </Button>
@@ -199,13 +190,12 @@ const formatDateTime = (iso: string | null) => {
                                 preserve-scroll
                                 class="rounded-md border px-3 py-1.5 text-xs transition-colors"
                                 :class="link.active ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-accent'"
-                                v-html="link.label"
-                            />
-                            <span
-                                v-else
-                                class="rounded-md border border-transparent px-3 py-1.5 text-xs text-muted-foreground opacity-50"
-                                v-html="link.label"
-                            />
+                            >
+                                {{ link.label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»') }}
+                            </Link>
+                            <span v-else class="rounded-md border border-transparent px-3 py-1.5 text-xs text-muted-foreground opacity-50">
+                                {{ link.label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»') }}
+                            </span>
                         </template>
                     </div>
                 </CardContent>

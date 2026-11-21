@@ -49,6 +49,9 @@ const form = useForm({
     reference_images: [] as string[],
 });
 
+const formErrors = computed(() => form.errors as Record<string, string>);
+const balanceError = computed(() => formErrors.value.balance);
+
 const sizes: { value: ImageSize; label: string; hint: string }[] = [
     { value: '1024x1024', label: '1024 × 1024', hint: 'Square' },
     { value: '1536x1024', label: '1536 × 1024', hint: 'Landscape' },
@@ -92,11 +95,7 @@ const submit = () => {
 };
 
 // Automatically poll Inertia every 3 seconds ONLY while at least one generation is active.
-const { start, stop } = usePoll(
-    3000,
-    { only: ['generations', 'hasActiveGenerations', 'auth'] },
-    { autoStart: false },
-);
+const { start, stop } = usePoll(3000, { only: ['generations', 'hasActiveGenerations', 'auth'] }, { autoStart: false });
 
 watch(
     () => props.hasActiveGenerations,
@@ -225,10 +224,8 @@ const formatDateTime = (iso: string | null) => {
                                     />
                                     <p class="text-xs text-muted-foreground">
                                         Tip: Test Pixelforge error handling with keywords like
-                                        <code class="rounded bg-muted px-1">[succeed]</code>,
-                                        <code class="rounded bg-muted px-1">[fail]</code>,
-                                        <code class="rounded bg-muted px-1">[blocked]</code>,
-                                        <code class="rounded bg-muted px-1">[slow]</code>, or
+                                        <code class="rounded bg-muted px-1">[succeed]</code>, <code class="rounded bg-muted px-1">[fail]</code>,
+                                        <code class="rounded bg-muted px-1">[blocked]</code>, <code class="rounded bg-muted px-1">[slow]</code>, or
                                         <code class="rounded bg-muted px-1">[duplicate]</code>.
                                     </p>
                                     <InputError :message="form.errors.prompt" />
@@ -314,7 +311,7 @@ const formatDateTime = (iso: string | null) => {
                                                     <Trash2 class="size-4 text-muted-foreground" />
                                                 </Button>
                                             </div>
-                                            <InputError :message="(form.errors as Record<string, string>)[`reference_images.${index}`]" />
+                                            <InputError :message="formErrors[`reference_images.${index}`]" />
                                         </div>
                                         <p class="text-xs text-muted-foreground">
                                             Each reference image adds {{ pricing.tokens.per_reference_image.toLocaleString() }} input image tokens.
@@ -326,14 +323,13 @@ const formatDateTime = (iso: string | null) => {
                                 <!-- Live Upfront Cost Estimate Box -->
                                 <div class="rounded-lg border bg-muted/40 p-4">
                                     <div class="flex items-baseline justify-between gap-2">
-                                        <span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                            Estimated Cost
-                                        </span>
+                                        <span class="text-xs font-medium uppercase tracking-wide text-muted-foreground"> Estimated Cost </span>
                                         <span
                                             class="font-mono text-base font-semibold"
                                             :title="`Exact range: $${formatNanosExact(estimate.userCostNanos.min)} – $${formatNanosExact(estimate.userCostNanos.max)}`"
                                         >
-                                            {{ formatNanosDisplay(estimate.userCostNanos.min) }} – {{ formatNanosDisplay(estimate.userCostNanos.max) }}
+                                            {{ formatNanosDisplay(estimate.userCostNanos.min) }} –
+                                            {{ formatNanosDisplay(estimate.userCostNanos.max) }}
                                         </span>
                                     </div>
 
@@ -343,7 +339,8 @@ const formatDateTime = (iso: string | null) => {
                                     </div>
 
                                     <p class="mt-2 text-xs text-muted-foreground">
-                                        We temporarily reserve the maximum possible cost when you submit and immediately refund the unused difference once complete. Failed generations cost <strong>$0.00</strong>.
+                                        We temporarily reserve the maximum possible cost when you submit and immediately refund the unused difference
+                                        once complete. Failed generations cost <strong>$0.00</strong>.
                                     </p>
 
                                     <button
@@ -356,14 +353,25 @@ const formatDateTime = (iso: string | null) => {
                                         <ChevronDown v-else class="size-3.5" />
                                     </button>
 
-                                    <div v-if="showEstimateBreakdown" class="mt-3 space-y-1.5 border-t pt-2.5 font-mono text-xs text-muted-foreground">
+                                    <div
+                                        v-if="showEstimateBreakdown"
+                                        class="mt-3 space-y-1.5 border-t pt-2.5 font-mono text-xs text-muted-foreground"
+                                    >
                                         <div class="flex justify-between">
                                             <span>Input text (±15%):</span>
-                                            <span>{{ estimate.tokens.inputTextMin }}–{{ estimate.tokens.inputTextMax }} tok @ ${{ pricing.rates.input_text_tokens }}/1M</span>
+                                            <span
+                                                >{{ estimate.tokens.inputTextMin }}–{{ estimate.tokens.inputTextMax }} tok @ ${{
+                                                    pricing.rates.input_text_tokens
+                                                }}/1M</span
+                                            >
                                         </div>
                                         <div class="flex justify-between">
                                             <span>Input images ({{ activeRefCount }}):</span>
-                                            <span>{{ estimate.tokens.inputImage.toLocaleString() }} tok @ ${{ pricing.rates.input_image_tokens }}/1M</span>
+                                            <span
+                                                >{{ estimate.tokens.inputImage.toLocaleString() }} tok @ ${{
+                                                    pricing.rates.input_image_tokens
+                                                }}/1M</span
+                                            >
                                         </div>
                                         <div class="flex justify-between">
                                             <span>Output ({{ form.quality }}, {{ form.size }}):</span>
@@ -371,18 +379,27 @@ const formatDateTime = (iso: string | null) => {
                                         </div>
                                         <div class="flex justify-between">
                                             <span>Reasoning ({{ form.quality }}):</span>
-                                            <span>{{ estimate.tokens.reasoningMin.toLocaleString() }}–{{ estimate.tokens.reasoningMax.toLocaleString() }} tok @ ${{ pricing.rates.reasoning_tokens }}/1M</span>
+                                            <span
+                                                >{{ estimate.tokens.reasoningMin.toLocaleString() }}–{{
+                                                    estimate.tokens.reasoningMax.toLocaleString()
+                                                }}
+                                                tok @ ${{ pricing.rates.reasoning_tokens }}/1M</span
+                                            >
                                         </div>
                                         <div class="flex justify-between border-t pt-1.5 font-semibold text-foreground">
                                             <span>Includes {{ markupPercent }}% markup:</span>
-                                            <span>${{ formatNanosExact(estimate.userCostNanos.min) }}–${{ formatNanosExact(estimate.userCostNanos.max) }}</span>
+                                            <span
+                                                >${{ formatNanosExact(estimate.userCostNanos.min) }}–${{
+                                                    formatNanosExact(estimate.userCostNanos.max)
+                                                }}</span
+                                            >
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Insufficient Balance Banner -->
                                 <div
-                                    v-if="!canAfford || (form.errors as Record<string, string>).balance"
+                                    v-if="!canAfford || balanceError"
                                     class="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
                                 >
                                     <div class="flex items-start gap-2">
@@ -390,7 +407,7 @@ const formatDateTime = (iso: string | null) => {
                                         <div class="flex-1 space-y-2">
                                             <p>
                                                 {{
-                                                    (form.errors as Record<string, string>).balance ||
+                                                    balanceError ||
                                                     `You need at least ${formatNanosDisplay(estimate.userCostNanos.max)} available to cover the maximum cost (current balance: ${user.balance_display}).`
                                                 }}
                                             </p>
@@ -623,13 +640,12 @@ const formatDateTime = (iso: string | null) => {
                                     preserve-scroll
                                     class="rounded-md border px-3 py-1.5 text-xs transition-colors"
                                     :class="link.active ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-accent'"
-                                    v-html="link.label"
-                                />
-                                <span
-                                    v-else
-                                    class="rounded-md border border-transparent px-3 py-1.5 text-xs text-muted-foreground opacity-50"
-                                    v-html="link.label"
-                                />
+                                >
+                                    {{ link.label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»') }}
+                                </Link>
+                                <span v-else class="rounded-md border border-transparent px-3 py-1.5 text-xs text-muted-foreground opacity-50">
+                                    {{ link.label.replace(/&laquo;/g, '«').replace(/&raquo;/g, '»') }}
+                                </span>
                             </template>
                         </div>
                     </div>
@@ -638,7 +654,14 @@ const formatDateTime = (iso: string | null) => {
         </div>
 
         <!-- Full Image Preview Modal -->
-        <Dialog :open="previewGeneration !== null" @update:open="(open) => { if (!open) previewGeneration = null; }">
+        <Dialog
+            :open="previewGeneration !== null"
+            @update:open="
+                (open) => {
+                    if (!open) previewGeneration = null;
+                }
+            "
+        >
             <DialogContent class="max-w-3xl">
                 <DialogHeader>
                     <DialogTitle class="pr-6 text-base font-medium leading-snug">
