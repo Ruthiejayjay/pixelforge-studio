@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'pixelforge' => [
+        'base_url' => rtrim((string) env('PIXELFORGE_BASE_URL', 'https://pixelforge.promptedit.dev/v1'), '/'),
+        'api_key' => env('PIXELFORGE_API_KEY'),
+        'webhook_secret' => env('PIXELFORGE_WEBHOOK_SECRET'),
+        'markup_percent' => (int) env('PIXELFORGE_MARKUP_PERCENT', 25),
+        'pricing_cache_ttl' => (int) env('PIXELFORGE_PRICING_CACHE_TTL', 300),
+        'webhook_tolerance_seconds' => (int) env('PIXELFORGE_WEBHOOK_TOLERANCE_SECONDS', 300),
+        'welcome_credits_nanos' => (int) env('PIXELFORGE_WELCOME_CREDITS_NANOS', 2_000_000_000),
+    ],
+
 ];
