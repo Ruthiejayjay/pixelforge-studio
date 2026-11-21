@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Money;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -37,14 +38,30 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        $user = $request->user();
 
-        return array_merge(parent::share($request), [
+        return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'email_verified_at' => $user->email_verified_at,
+                    'is_admin' => (bool) $user->is_admin,
+                    'balance_nanos' => (int) $user->balance_nanos,
+                    'balance_display' => Money::fromNanodollars((int) $user->balance_nanos)->toDisplayUsd(2, 6),
+                    'balance_exact' => Money::fromNanodollars((int) $user->balance_nanos)->toExactUsdString(),
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                ] : null,
             ],
-        ]);
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+            ],
+        ];
     }
 }
