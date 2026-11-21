@@ -57,7 +57,7 @@ class CreditsController extends Controller
             ])
             ->sum('reserved_user_cost_nanos');
 
-        return Inertia::render('Credits/Index', [
+        return Inertia::render('credits/Index', [
             'summary' => [
                 'balance_nanos' => $user->balance_nanos,
                 'balance_display' => Money::fromNanodollars($user->balance_nanos)->toDisplayUsd(2, 6),

@@ -28,7 +28,7 @@ class StudioController extends Controller
                 GenerationStatus::Processing,
             ])
             ->exists();
-        return Inertia::render('Studio/Index', [
+        return Inertia::render('studio/Index', [
             'pricing' => $pricingService->getPricing(),
             'markupPercent' => (int) config('services.pixelforge.markup_percent', 25),
             'generations' => $generations,
