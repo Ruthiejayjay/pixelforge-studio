@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $ledger = app(CreditLedgerService::class);
-        $adminEmail = (string) env('ADMIN_EMAIL', 'admin@pixelforge-studio.test');
-        $adminPassword = (string) env('ADMIN_PASSWORD', 'password');
-        $admin = User::query()->firstOrCreate(
+        $adminEmail = (string) config('services.pixelforge.admin_email', 'admin@pixelforge-studio.test');
+        $adminPassword = (string) config('services.pixelforge.admin_password', 'password');
+        $admin = User::query()->updateOrCreate(
             ['email' => $adminEmail],
             [
                 'name' => 'Operator Admin',

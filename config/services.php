@@ -43,6 +43,8 @@ return [
         'pricing_cache_ttl' => (int) env('PIXELFORGE_PRICING_CACHE_TTL', 300),
         'webhook_tolerance_seconds' => (int) env('PIXELFORGE_WEBHOOK_TOLERANCE_SECONDS', 300),
         'welcome_credits_nanos' => (int) env('PIXELFORGE_WELCOME_CREDITS_NANOS', 2_000_000_000),
+        'admin_email' => env('ADMIN_EMAIL', 'admin@pixelforge-studio.test'),
+        'admin_password' => env('ADMIN_PASSWORD', 'password'),
     ],
 
 ];
